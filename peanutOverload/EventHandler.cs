@@ -13,15 +13,11 @@ using System.Collections;
 
 namespace peanutOverload
 {
-    class EventHandler : IEventHandlerRoundStart, IEventHandlerTeamRespawn, IEventHandlerRoundEnd, IEventHandlerCheckEscape, IEventHandlerPlayerHurt
+    class EventHandler : IEventHandlerRoundStart, IEventHandlerTeamRespawn, IEventHandlerRoundEnd, IEventHandlerCheckEscape, IEventHandlerSetRoleMaxHP, IEventHandlerPlayerHurt
     {
         static IConfigFile Config => ConfigManager.Manager.Config;
         private static System.Random getRandom = new System.Random();
         private PeanutOverload plugin;
-
-        private bool spawnThingy = false;
-        private List<Player> players;
-        private int waitIntThingy = 0;
 
         public EventHandler(PeanutOverload plugin)
         {
@@ -40,6 +36,7 @@ namespace peanutOverload
                 if (!plugin.isActive) return;
             }
 
+            List<Player> players;
             players = plugin.Server.GetPlayers();
 
             if (players.Count <= 0) return;
@@ -55,9 +52,8 @@ namespace peanutOverload
                 foreach (Player p in players)
                 {
                     p.ChangeRole(Role.SCP_173);
-                    p.SetHealth(1);
+                    p.Damage(5);
                 }
-                //spawnThingy = true;
             }
             else
             {
@@ -82,15 +78,14 @@ namespace peanutOverload
 
                 foreach (Player p in players)
                 {
-                    p.ChangeRole(Role.SCP_173);
-                    p.SetHealth(1);
+                    p.ChangeRole(Role.SCP_173, true, false, false);
+                    p.Damage(5);
                 }
-                //spawnThingy = true;
             }
 
 
-            //plugin.Server.Map.Broadcast(10, "Doggo Attack: This is an event where the mission of Class D is to escape the facility by any means necessary. One escaped Class D is a victory to Class D", false);
-            //plugin.Server.Map.Broadcast(10, "There will spawn one scp 939-89, and any Class D killed by it will become scp 939-53, and aid it in killing Class D.", false);
+            plugin.Server.Map.Broadcast(8, "Peanut Overload: 1-3 Class-D. The rest is peanut. Peanut has low hp, but is super fast. All Class-D start with a pistol.", false);
+            plugin.Server.Map.Broadcast(8, "Rules: No Class-D teamkills while the event is active. Class-D are randomly selected.", false);
         }
 
         public void OnTeamRespawn(TeamRespawnEvent ev)
@@ -101,6 +96,7 @@ namespace peanutOverload
             }
             else
             {
+
                 if (!plugin.isActive) return;
             }
 
@@ -118,11 +114,21 @@ namespace peanutOverload
             {
                 if (!plugin.isActive) return;
             }
+
             plugin.isActive = false;
         }
 
         public void OnCheckEscape(PlayerCheckEscapeEvent ev)
         {
+            if (Config.GetBoolValue("po_gamemodemanager", true))
+            {
+                if (GamemodeManager.GamemodeManager.CurrentMode != plugin) return;
+            }
+            else
+            {
+                if (!plugin.isActive) return;
+            }
+
             if (ev.AllowEscape)
             {
                 ev.ChangeRole = Role.SPECTATOR;
@@ -131,38 +137,36 @@ namespace peanutOverload
 
         public void OnPlayerHurt(PlayerHurtEvent ev)
         {
+            if (Config.GetBoolValue("po_gamemodemanager", true))
+            {
+                if (GamemodeManager.GamemodeManager.CurrentMode != plugin) return;
+            }
+            else
+            {
+                if (!plugin.isActive) return;
+            }
+
             if (ev.Player.TeamRole.Role == Role.SCP_173)
             {
-                ev.Player.Kill();
+                ev.Damage = 62;
             }
         }
 
-        //public void OnFixedUpdate(FixedUpdateEvent ev)
-        //{
-        //    if (spawnThingy)
-        //    {
-        //        if(waitIntThingy <= 3)
-        //        {
-        //            waitIntThingy++;
-        //        }
-        //        else if (waitIntThingy == 4)
-        //        {
-        //            foreach (Player p in players)
-        //            {
-        //                p.ChangeRole(Role.SCP_173);
-        //                p.SetHealth(1000);
-        //            }
-        //            waitIntThingy++;
-        //        }
-        //    }
-        //}
+        public void OnSetRoleMaxHP(SetRoleMaxHPEvent ev)
+        {
+            if (Config.GetBoolValue("po_gamemodemanager", true))
+            {
+                if (GamemodeManager.GamemodeManager.CurrentMode != plugin) return;
+            }
+            else
+            {
+                if (!plugin.isActive) return;
+            }
 
-        //public IEnumerable<Task> SpawnPeanut(Player p)
-        //{
-        //    Task.Wait(TimeSpan.FromMilliseconds(500));
-        //    p.ChangeRole(Role.SCP_173);
-        //    p.SetHealth(1);
-        //    yield return 0;
-        //}
+            if (ev.Role == Role.SCP_173)
+            {
+                ev.MaxHP = 310;
+            }
+        }
     }
 }

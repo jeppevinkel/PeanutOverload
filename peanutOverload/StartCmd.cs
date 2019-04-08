@@ -34,7 +34,8 @@ namespace peanutOverload
 
         public string[] OnCall(ICommandSender sender, string[] args)
         {
-            Player caller = sender as Player;
+            if (plugin.isActive) return new string[] { "PeanutOverlaod is already active!" };
+
             plugin.isActive = true;
 
             return new string[] { "PeanutOverload", "Activated" };
