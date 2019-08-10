@@ -52,21 +52,22 @@ namespace peanutOverload
                 foreach (Player p in players)
                 {
                     p.ChangeRole(Role.SCP_173);
-                    p.Damage(5);
+                    //p.SetHealth(310);
+                    //p.Damage(5);
                 }
             }
             else
             {
                 int rnd = getRandom.Next(0, players.Count);
+                Player ClassDPlayer = players[rnd];
                 players.RemoveAt(rnd);
                 int rnd2 = getRandom.Next(0, players.Count);
+                Player ClassDPlayer2 = players[rnd2];
                 players.RemoveAt(rnd2);
                 int rnd3 = getRandom.Next(0, players.Count);
+                Player ClassDPlayer3 = players[rnd3];
                 players.RemoveAt(rnd3);
 
-                Player ClassDPlayer = players[rnd];
-                Player ClassDPlayer2 = players[rnd2];
-                Player ClassDPlayer3 = players[rnd3];
 
                 ClassDPlayer.ChangeRole(Role.CLASSD, false, true, false);
                 ClassDPlayer2.ChangeRole(Role.CLASSD, false, true, false);
@@ -78,8 +79,9 @@ namespace peanutOverload
 
                 foreach (Player p in players)
                 {
-                    p.ChangeRole(Role.SCP_173, true, true, false);
-                    p.Damage(5);
+                    p.ChangeRole(Role.SCP_173, false, true, false);
+                    //p.SetHealth(310);
+                    //p.Damage(5);
                 }
             }
 
@@ -148,25 +150,26 @@ namespace peanutOverload
 
             if (ev.Player.TeamRole.Role == Role.SCP_173)
             {
-                ev.Damage = 62;
+                //ev.Damage = 62;
+                ev.Damage = ev.Player.TeamRole.MaxHP * 0.3f;
             }
         }
 
         public void OnSetRoleMaxHP(SetRoleMaxHPEvent ev)
         {
-            if (Config.GetBoolValue("po_gamemodemanager", true))
-            {
-                if (GamemodeManager.GamemodeManager.CurrentMode != plugin) return;
-            }
-            else
-            {
-                if (!plugin.isActive) return;
-            }
+            //if (Config.GetBoolValue("po_gamemodemanager", true))
+            //{
+            //    if (GamemodeManager.GamemodeManager.CurrentMode != plugin) return;
+            //}
+            //else
+            //{
+            //    if (!plugin.isActive) return;
+            //}
 
-            if (ev.Role == Role.SCP_173)
-            {
-                ev.MaxHP = 310;
-            }
+            //if (ev.Role == Role.SCP_173)
+            //{
+            //    ev.MaxHP = 310;
+            //}
         }
     }
 }
