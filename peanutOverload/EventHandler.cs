@@ -78,7 +78,7 @@ namespace peanutOverload
 
                 foreach (Player p in players)
                 {
-                    p.ChangeRole(Role.SCP_173, true, false, false);
+                    p.ChangeRole(Role.SCP_173, true, true, false);
                     p.Damage(5);
                 }
             }
